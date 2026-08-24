@@ -1,0 +1,88 @@
+{
+  "name": "skinvote",
+  "productName": "SkinVote",
+  "version": "1.0.0",
+  "description": "SkinVote — автономное десктопное приложение для визуального 3D-просмотра и оценки скинов Minecraft",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "setup-assets": "node scripts/setup-assets.mjs",
+    "build": "npm run setup-assets && electron-builder --win",
+    "dist": "npm run setup-assets && electron-builder --win",
+    "dist:win": "npm run setup-assets && electron-builder --win",
+    "dist:portable": "npm run setup-assets && electron-builder --win portable",
+    "dist:nsis": "npm run setup-assets && electron-builder --win nsis",
+    "dist:dir": "npm run setup-assets && electron-builder --win dir",
+    "pack": "electron-builder --dir"
+  },
+  "keywords": [
+    "minecraft",
+    "skin",
+    "viewer",
+    "rating",
+    "electron"
+  ],
+  "author": "SkinVote",
+  "license": "MIT",
+  "build": {
+    "appId": "com.skinvote.app",
+    "productName": "SkinVote",
+    "copyright": "Copyright © 2026 SkinVote",
+    "directories": {
+      "output": "dist",
+      "buildResources": "assets"
+    },
+    "files": [
+      "index.html",
+      "main.js",
+      "preload.js",
+      "css/**/*",
+      "js/**/*",
+      "assets/**/*",
+      "vendor/**/*",
+      "!scripts/**/*",
+      "!node_modules/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.ico",
+      "executableName": "SkinVote"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "SkinVote",
+      "installerIcon": "assets/icon.ico",
+      "uninstallerIcon": "assets/icon.ico",
+      "installerHeaderIcon": "assets/icon.ico",
+      "artifactName": "SkinVote-Setup-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "SkinVote-Portable-${version}.${ext}"
+    },
+    "publish": null
+  },
+  "devDependencies": {
+    "@fontsource/manrope": "^5.3.0",
+    "@fontsource/outfit": "^5.3.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "electron": "^43.4.1",
+    "electron-builder": "^26.15.3",
+    "png-to-ico": "^3.0.2"
+  }
+}

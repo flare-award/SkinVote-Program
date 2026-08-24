@@ -1402,6 +1402,22 @@ p {
   }
 }
 
+@media (max-height: 720px) {
+  body {
+    overflow-y: auto;
+  }
+
+  .app {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .rate-layout {
+    min-height: 480px;
+  }
+}
+
 @media (max-width: 720px) {
   .app {
     padding: 14px;
