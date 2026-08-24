@@ -10,13 +10,13 @@
       content="SkinVote — локальная визуальная оценка скинов Minecraft. 3D-просмотр, рейтинг по категориям и таблица лидеров. Без загрузки на сервер."
     />
     <title>SkinVote — оценка скинов Minecraft</title>
-    <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap"
-      rel="stylesheet"
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' blob: data:;"
     />
+    <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="./assets/favicon.ico" />
+    <link rel="stylesheet" href="./assets/fonts/fonts.css" />
     <link rel="stylesheet" href="./css/app.css" />
   </head>
   <body>
@@ -412,7 +412,7 @@
     <dialog id="reveal-dialog" class="sheet">
       <form method="dialog" class="sheet-inner">
         <h3>Расположение файла</h3>
-        <p class="muted">
+        <p class="muted" id="reveal-desc">
           Браузер не может открыть системный проводник и выделить там файл — это ограничение
           веб-платформы. Скопируйте путь ниже и откройте папку вручную в проводнике.
         </p>
@@ -423,7 +423,8 @@
         <div class="sheet-actions">
           <button value="cancel" class="btn btn-text">Закрыть</button>
           <button type="button" class="btn btn-outlined" id="btn-copy-dir">Копировать папку</button>
-          <button type="button" class="btn btn-filled" id="btn-copy-path">Копировать путь</button>
+          <button type="button" class="btn btn-outlined" id="btn-copy-path">Копировать путь</button>
+          <button type="button" class="btn btn-filled" id="btn-open-explorer" hidden>Показать в проводнике</button>
         </div>
       </form>
     </dialog>
