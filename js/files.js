@@ -148,6 +148,7 @@ export async function inspectSkinFile(entry) {
         id: makeId(),
         name,
         relativePath,
+        fullPath: entry.file?.path || entry.fullPath || null,
         file,
         url: previewUrl,
         width,
@@ -306,19 +307,20 @@ export function filesFromInput(fileList) {
   }));
 }
 
-// Из браузера нельзя программно открыть системный проводник и выделить там файл —
-// это ограничение веб-платформы. showDirectoryPicker — это диалог ВЫБОРА папки, а не
-// «открыть в проводнике», поэтому он здесь больше не используется. Вместо этого
-// возвращаем известный путь к файлу/папке, чтобы пользователь мог его скопировать.
+// В оффлайн-приложении Electron поддерживается нативный показ файла в системном
+// проводнике (через shell.showItemInFolder). В обычном браузере возвращается
+// известный путь к файлу/папке для копирования пользователем.
 export function revealSkin(skin) {
+  const fullPath = skin?.fullPath || "";
   const relativePath = skin?.relativePath || skin?.name || "";
-  const sep = relativePath.lastIndexOf("/");
-  const dirPath = sep >= 0 ? relativePath.slice(0, sep) : "";
+  const targetPath = fullPath || relativePath;
+  const sep = Math.max(targetPath.lastIndexOf("/"), targetPath.lastIndexOf("\\"));
+  const dirPath = sep >= 0 ? targetPath.slice(0, sep) : "";
   return {
-    mode: "path",
-    path: relativePath || skin?.name || "",
-    // Папка: если есть вложенность — берём её, иначе показываем хотя бы имя файла.
-    dirPath: dirPath || relativePath || "",
+    mode: fullPath ? "native" : "path",
+    fullPath: fullPath || null,
+    path: targetPath || skin?.name || "",
+    dirPath: dirPath || targetPath || "",
     name: skin?.name || "",
   };
 }

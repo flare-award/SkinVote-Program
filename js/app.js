@@ -78,10 +78,12 @@ const els = {
   lbBody: document.getElementById("lb-body"),
   toast: document.getElementById("toast"),
   dialog: document.getElementById("reveal-dialog"),
+  revealDesc: document.getElementById("reveal-desc"),
   revealPath: document.getElementById("reveal-path"),
   revealDir: document.getElementById("reveal-dir"),
   btnCopyPath: document.getElementById("btn-copy-path"),
   btnCopyDir: document.getElementById("btn-copy-dir"),
+  btnOpenExplorer: document.getElementById("btn-open-explorer"),
   boardSort: document.getElementById("board-sort"),
   toggleFilters: document.getElementById("btn-toggle-filters"),
   boardFilters: document.getElementById("board-filters"),
@@ -850,12 +852,29 @@ function fillPathFields(result, pathNode, dirNode) {
   dirNode.textContent = result.dirPath || result.path || "—";
 }
 
+let currentRevealSkin = null;
+
 function onReveal(skin) {
-  // Из браузера нельзя открыть системный проводник и выделить файл — показываем
-  // известный путь к файлу и папке, чтобы пользователь скопировал его и открыл
-  // папку вручную. Никаких диалогов выбора файлов/папок.
+  currentRevealSkin = skin;
   const result = revealSkin(skin);
   fillPathFields(result, els.revealPath, els.revealDir);
+
+  const isElectron = Boolean(window.electronAPI?.showItemInFolder);
+  const hasFullPath = Boolean(skin?.fullPath);
+
+  if (els.btnOpenExplorer) {
+    els.btnOpenExplorer.hidden = !(isElectron && hasFullPath);
+  }
+  if (els.revealDesc) {
+    if (isElectron && hasFullPath) {
+      els.revealDesc.textContent =
+        "Файл расположен на локальном диске. Вы можете открыть его напрямую в проводнике или скопировать путь.";
+    } else {
+      els.revealDesc.textContent =
+        "Скопируйте путь к файлу или папке ниже для открытия в системном проводнике.";
+    }
+  }
+
   if (typeof els.dialog.showModal === "function") els.dialog.showModal();
   else showToast(result.path || result.dirPath);
 }
@@ -1351,9 +1370,20 @@ function bindRate() {
   els.btnBackRate.addEventListener("click", backToRatings);
   els.btnNewSession.addEventListener("click", newSession);
 
-  // Путь к файлу: копирование без диалогов выбора.
+  // Путь к файлу: копирование без диалогов выбора и нативный показ в проводнике.
   els.btnCopyPath.addEventListener("click", () => copyText(els.revealPath.textContent.trim()));
   els.btnCopyDir.addEventListener("click", () => copyText(els.revealDir.textContent.trim()));
+  els.btnOpenExplorer?.addEventListener("click", async () => {
+    if (currentRevealSkin?.fullPath && window.electronAPI?.showItemInFolder) {
+      const ok = await window.electronAPI.showItemInFolder(currentRevealSkin.fullPath);
+      if (ok) {
+        showToast("Открыто в проводнике");
+        if (els.dialog?.open) els.dialog.close();
+      } else {
+        showToast("Не удалось открыть проводник");
+      }
+    }
+  });
   els.detailDialog.addEventListener("close", handleDetailClose);
   els.detailDialog.addEventListener("click", (event) => {
     if (event.target === els.detailDialog) els.detailDialog.close();
